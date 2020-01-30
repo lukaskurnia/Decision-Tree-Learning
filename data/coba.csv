@@ -1,0 +1,15 @@
+outlook,temp,humidity,windy,play
+1,hot,high,false,no
+2,hot,high,true,no
+3,hot,high,false,yes
+4,mild,high,false,yes
+4,cool,normal,false,yes
+4,cool,normal,true,no
+3,cool,normal,true,yes
+2,mild,high,false,no
+2,cool,normal,false,yes
+4,mild,normal,false,yes
+2,mild,normal,true,yes
+3,mild,high,true,yes
+3,hot,normal,false,yes
+4,mild,high,true,no

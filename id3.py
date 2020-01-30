@@ -1,27 +1,36 @@
 import pandas as pd
 from tree import Tree
 from math import log
-    
+
+# Constant class for continuous value
+HIGH = 'high'
+LOW = 'low'
+
 class DecisionTreeLearning:
     # ATTRIBUTE
     # 
     # df, full dataframe
     # target, target attribute
     # tree, decision tree
+    # attributes, list of attributes with its unique value
 
     # constructor
     def __init__(self):
-        print("hello world")
-        self.readCsv('play')
+        self.readCsv('coba', 'play')
 
-    # read tennis.csv
-    def readCsv(self, target):
-        self.df = pd.read_csv('data/tennis.csv')
+    # read file csv with given filename in folder data
+    def readCsv(self, filename, target):
+        self.df = pd.read_csv('data/' + filename + '.csv')
         self.target = target
-        
-    # print tennis.csv
-    def printCsv(self):
-        print(self.df)
+        self.attributes = {}
+        for col in self.df.columns:
+            if not(self.isContinuos(col)):
+                self.attributes[col] = self.df[col].unique().tolist()
+            else:
+                self.attributes[col] = [HIGH, LOW]
+
+    def isContinuos(self, attr):
+        return not ((self.df[attr].dtypes == 'bool') or (self.df[attr].dtypes == 'object'))
 
     # build tree by current dataframe
     def build(self):
@@ -45,17 +54,15 @@ class DecisionTreeLearning:
         
         return tree
 
-    def printTree(self):
+    def __str__(self):
         print(self.tree)
         
     def entropy(self, df, attr):
         #dataframe row
         row = df.shape[0]
 
-        
         #get unique value
         unique = df[attr].unique().tolist()
-
 
         entropy = 0
         for u in unique:
@@ -105,9 +112,9 @@ class DecisionTreeLearning:
         newdf = df[df[attr]==val]
         return newdf.reset_index(drop=True)
 
-    # def splitHorizontalDiscardValue(self, df, attr, val):
-    #     newdf = df[df[attr]!=val]
-    #     return newdf.reset_index(drop=True)
+    def splitHorizontalDiscardValue(self, df, attr, val):
+        newdf = df[df[attr]!=val]
+        return newdf.reset_index(drop=True)
     
     def dropAttr(self, df, attr):
         return df.drop(columns=attr)
