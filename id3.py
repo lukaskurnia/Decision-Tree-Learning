@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np 
 from tree import Tree
 from math import log
 
@@ -14,11 +15,13 @@ class DecisionTreeLearning:
     # tree, decision tree
     # attributes, list of attributes with its unique value
     # gainRatio (default = false), set true to use gain ratio to select max attribute
+    # pruned (default = false), set true to use post-pruning rule
 
     # constructor
-    def __init__(self, filename, target, gainRatio=False):
+    def __init__(self, filename, target, gainRatio=False, pruned=False):
         self.readCsv(filename, target)
         self.gainRatio = gainRatio
+        self.pruned = pruned
 
     # read file csv with given filename in folder data
     def readCsv(self, filename, target):
@@ -51,6 +54,21 @@ class DecisionTreeLearning:
 
         attr = self.getMaxGainAttr(df)
         tree = Tree(attr)
+        
+        if self.isContinuous(attr) == True:
+            treshold = self.getBestTreshold(df, attr)
+            lowDf, highDf = self.splitHorizontalContinuous(df, attr, treshold)
+            
+            childLowDf = self.dropAttr(lowDf, attr)
+            childLowTree = self._build(childLowDf)
+            tree.addChild('< ' + str(treshold) , childLowTree)
+
+            childHighDf = self.dropAttr(highDf, attr)
+            childHighTree = self._build(childHighDf)
+            tree.addChild('>= ' + str(treshold) , childHighTree)
+
+            return tree
+
         for value in self.attributes[attr]:
             splittedDf = self.splitHorizontalKeepValue(df, attr, value)
 
@@ -128,10 +146,22 @@ class DecisionTreeLearning:
         newdf = df[df[attr]==val]
         return newdf.reset_index(drop=True)
 
+    # return 2 dataframes, by a treshold value
+    def splitHorizontalContinuous(self, df, attr, val):
+        lowDf = df[df[attr] < val].reset_index(drop=True)
+        highDf = df[df[attr] >= val].reset_index(drop=True)
+        return lowDf, highDf
+
     def splitHorizontalDiscardValue(self, df, attr, val):
         newdf = df[df[attr]!=val]
         return newdf.reset_index(drop=True)
     
+    # return 2 dataframes, first dataframe size is given percetage of original set, 
+    # and the second is the rest of it
+    def splitByPercentage(self, percentage):
+        idx = (round(self.df.shape[0]*percentage/100))
+        return np.split(self.df, [idx])
+        
     def dropAttr(self, df, attr):
         return df.drop(columns=attr)
 
