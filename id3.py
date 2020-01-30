@@ -13,10 +13,12 @@ class DecisionTreeLearning:
     # target, target attribute
     # tree, decision tree
     # attributes, list of attributes with its unique value
+    # gainRatio (default = false), set true to use gain ratio to select max attribute
 
     # constructor
-    def __init__(self, filename, target):
+    def __init__(self, filename, target, gainRatio=False):
         self.readCsv(filename, target)
+        self.gainRatio = gainRatio
 
     # read file csv with given filename in folder data
     def readCsv(self, filename, target):
@@ -39,15 +41,21 @@ class DecisionTreeLearning:
     # private method for build tree recursively
     def _build(self, df):
         if df.shape[1] == 1:
-            return Tree(df[self.target][0])
+            # empty attribute 
+            mode = self.df[self.target].mode()[0]
+            return Tree(mode)
+
         if len(df[self.target].unique()) == 1:
+            # entropy = 0 
             return Tree(df[self.target][0])
 
         attr = self.getMaxGainAttr(df)
         tree = Tree(attr)
         for value in self.attributes[attr]:
             splittedDf = self.splitHorizontalKeepValue(df, attr, value)
+
             if splittedDf.empty == True:
+                # empty example 
                 originalDf = self.splitHorizontalKeepValue(self.df, attr, value)
                 mode = originalDf[self.target].mode()[0]
                 childTree = Tree(mode)
