@@ -16,9 +16,9 @@ class DecisionTreeLearning:
     # gainRatio (default = false), set true to use gain ratio to select max attribute
 
     # constructor
-    def __init__(self, filename, target, gainRatio=False):
+    def __init__(self, filename, target, isGainRatio=False):
         self.readCsv(filename, target)
-        self.gainRatio = gainRatio
+        self.isGainRatio = isGainRatio
 
     # read file csv with given filename in folder data
     def readCsv(self, filename, target):
@@ -114,7 +114,10 @@ class DecisionTreeLearning:
         # print(features)
         gains = []
         for feature in features:
-            gains.append(self.infoGain(df, feature, self.entropy(df, self.target)))
+            if(self.isGainRatio == True):
+                gains.append(self.gainRatio(df, feature))
+            else:
+                gains.append(self.infoGain(df, feature, self.entropy(df, self.target)))
         
         #get index of max attributes
         maxindex = 0
