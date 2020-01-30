@@ -1,4 +1,5 @@
 import pandas as pd
+from tree import Tree
 from math import log
     
 class DecisionTreeLearning:
@@ -6,6 +7,7 @@ class DecisionTreeLearning:
     # 
     # df, full dataframe
     # target, target attribute
+    # tree, decision tree
 
     # constructor
     def __init__(self):
@@ -23,18 +25,42 @@ class DecisionTreeLearning:
 
     # build tree by current dataframe
     def build(self):
-        self.Tree = _build(self.df)
+        self.tree = self._build(self.df)
 
     # private method for build tree recursively
     def _build(self, df):
-        currentAttr = getMaxGainAttr(self.df)
+        print(df)
+        attr = self.getMaxGainAttr(df)
+        if self.entropy(df, attr) == 0:
+            return Tree(df[self.target][0])
+        
+        tree = Tree(attr)
+        values = df[attr].unique().tolist()
+        for value in values:
+            print('attribut :', attr)
+            print('value :', value)
+            splittedDf = self.splitHorizontalKeepValue(df, attr, value)
+            print('splittedDf')
+            print(splittedDf)
+            childDf = self.dropAttr(splittedDf, attr)
+            print('childDf')
+            print(childDf)
+            childTree = self._build(childDf)
+            tree.addChild(value, childTree)
+        
+        return tree
 
+    def printTree(self):
+        print(self.tree)
+        
     def entropy(self, df, attr):
         #dataframe row
         row = df.shape[0]
 
+        
         #get unique value
         unique = df[attr].unique().tolist()
+
 
         entropy = 0
         for u in unique:
@@ -63,16 +89,24 @@ class DecisionTreeLearning:
         
         
     def getMaxGainAttr(self, df):
-        features = self.dropAttr(df)
+        features = df.columns.values
+        features = features[features!=self.target]
         gains = []
         for feature in features:
             gains.append(self.infoGain(df, feature, self.entropy(df, self.target)))
         
-        return max(gains)
+        #get index of max attributes
+        maxindex = 0
+        for i in range (1,len(gains)):
+            if (gains[maxindex]<gains[i]):
+                maxindex = i
+
+        return features[maxindex]
     
     def splitHorizontalKeepValue(self, df, attr, val):
         newdf = df[df[attr]==val]
         return newdf
-        
+    
     def dropAttr(self, df, attr):
         return df.drop(columns=attr)
+    
