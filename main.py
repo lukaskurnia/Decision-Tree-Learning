@@ -1,6 +1,6 @@
 from id3 import DecisionTreeLearning
 
-dtl = DecisionTreeLearning()
+dtl = DecisionTreeLearning("tennis", "play")
 # print(dtl.splitHorizontalKeepValue(dtl.df, 'outlook', 'sunny'))
 # e = dtl.entropy(dtl.splitHorizontalKeepValue(dtl.df, 'outlook', 'sunny'), 'play')
 # print(e)
@@ -13,8 +13,9 @@ dtl = DecisionTreeLearning()
 
 # dtl.test()
 
-# dtl.build()
-# dtl.printTree()
+dtl.build()
+
+dtl.printTree()
 
 # dtl.printCsv()
 # sort = dtl.sortValue(dtl.df,'sepal_width')

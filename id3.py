@@ -15,8 +15,8 @@ class DecisionTreeLearning:
     # attributes, list of attributes with its unique value
 
     # constructor
-    def __init__(self):
-        self.readCsv('coba', 'play')
+    def __init__(self, filename, target):
+        self.readCsv(filename, target)
 
     # read file csv with given filename in folder data
     def readCsv(self, filename, target):
@@ -45,16 +45,20 @@ class DecisionTreeLearning:
 
         attr = self.getMaxGainAttr(df)
         tree = Tree(attr)
-        values = df[attr].unique().tolist()
-        for value in values:
+        for value in self.attributes[attr]:
             splittedDf = self.splitHorizontalKeepValue(df, attr, value)
-            childDf = self.dropAttr(splittedDf, attr)
-            childTree = self._build(childDf)
+            if splittedDf.empty == True:
+                originalDf = self.splitHorizontalKeepValue(self.df, attr, value)
+                mode = originalDf[self.target].mode()[0]
+                childTree = Tree(mode)
+            else:
+                childDf = self.dropAttr(splittedDf, attr)
+                childTree = self._build(childDf)
             tree.addChild(value, childTree)
         
         return tree
 
-    def __str__(self):
+    def printTree(self):
         print(self.tree)
         
     def entropy(self, df, attr):
@@ -153,9 +157,3 @@ class DecisionTreeLearning:
             i += 1
         return listCandidateForC
         # for i in range(len(listClass)):
-
-
-    
-
-
-    
