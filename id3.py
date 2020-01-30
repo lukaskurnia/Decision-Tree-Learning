@@ -55,6 +55,7 @@ class DecisionTreeLearning:
         
         #get unique value
         unique = df[attr].unique().tolist()
+        # print(df[attr])
 
 
         entropy = 0
@@ -88,7 +89,9 @@ class DecisionTreeLearning:
                 
     def getMaxGainAttr(self, df):
         features = df.columns.values
+        # print(features)
         features = features[features!=self.target]
+        # print(features)
         gains = []
         for feature in features:
             gains.append(self.infoGain(df, feature, self.entropy(df, self.target)))
@@ -123,3 +126,29 @@ class DecisionTreeLearning:
             mode = self.df.mode()[col][0]
             rows = pd.isnull(self.df).any(1).nonzero()[0].tolist()
             self.df[col][rows]=mode
+
+    def getAllTreshold(self, df, attr):
+        sortedDf = self.sortValue(df,attr)
+        print(sortedDf)
+        listClass = sortedDf[self.target].values
+        print(listClass)
+        listCandidateForC = []
+        i = 0
+        while(i < len(listClass)-1):
+            if(listClass[i] != listClass[i+1]):
+                listAttr = sortedDf[attr].values
+                # print(listAttr[i])
+                # print(listAttr[i+1])
+                listCandidateForC.append((listAttr[i]+listAttr[i+1])/2)
+                # print(i)
+                # print(i+1)
+            # print(listClass[i])
+            i += 1
+        return listCandidateForC
+        # for i in range(len(listClass)):
+
+
+    
+
+
+    
