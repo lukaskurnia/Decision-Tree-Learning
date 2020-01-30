@@ -26,12 +26,12 @@ class DecisionTreeLearning:
         self.target = target
         self.attributes = {}
         for col in self.df.columns:
-            if not(self.isContinuos(col)):
+            if not(self.isContinuous(col)):
                 self.attributes[col] = self.df[col].unique().tolist()
             else:
                 self.attributes[col] = [HIGH, LOW]
 
-    def isContinuos(self, attr):
+    def isContinuous(self, attr):
         return not ((self.df[attr].dtypes == 'bool') or (self.df[attr].dtypes == 'object'))
 
     # build tree by current dataframe
@@ -107,6 +107,7 @@ class DecisionTreeLearning:
         return self.infoGain(df,attr,e)/self.entropy(df,attr) 
                 
     def getMaxGainAttr(self, df):
+        df = self.makeDiscrete(df)
         features = df.columns.values
         # print(features)
         features = features[features!=self.target]
@@ -148,9 +149,9 @@ class DecisionTreeLearning:
 
     def getAllTreshold(self, df, attr):
         sortedDf = self.sortValue(df,attr)
-        print(sortedDf)
+        # print(sortedDf)
         listClass = sortedDf[self.target].values
-        print(listClass)
+        # print(listClass)
         listCandidateForC = []
         i = 0
         while(i < len(listClass)-1):
@@ -165,3 +166,54 @@ class DecisionTreeLearning:
             i += 1
         return listCandidateForC
         # for i in range(len(listClass)):
+
+    def infoGainContinuous(self, df, attr, entropy, treshold):
+        sortedDf = self.sortValue(df,attr)
+        row = sortedDf.shape[0]
+        gain = entropy
+        # print("ini entropy " , gain)
+        dfLessThanTreshold = sortedDf[sortedDf[attr] < treshold]
+        dfGreaterThanTreshold = sortedDf[sortedDf[attr] >= treshold]
+        less = self.entropy(dfLessThanTreshold, self.target)
+        greater = self.entropy(dfGreaterThanTreshold, self.target)
+        # print(dfLessThanTreshold.shape[0]/row * less + dfGreaterThanTreshold.shape[0]/row * greater)
+        gain -= (dfLessThanTreshold.shape[0]/row * less + dfGreaterThanTreshold.shape[0]/row * greater)
+        return gain
+
+    def getBestTreshold(self, df, attr):
+        candidate = self.getAllTreshold(df,attr)
+        # print(candidate)
+        gains = []
+        for value in candidate:
+            gains.append(self.infoGainContinuous(df, attr, self.entropy(df, self.target), value))
+        
+        # print(gains)
+        #get index of max attributes
+        maxindex = 0
+        for i in range (1,len(gains)):
+            if (gains[maxindex]<gains[i]):
+                maxindex = i
+
+        return candidate[maxindex]
+
+    def makeDiscrete(self, df):
+        newDf = df.copy()
+        for col in newDf.columns:
+            if(self.isContinuous(col)):
+                treshold = self.getBestTreshold(df,col)
+                row = newDf[col].shape[0]
+                for i in range(0, row):
+                    if(newDf[col][i] < treshold):
+                        newDf[col][i] = LOW
+                    else:
+                        newDf[col][i] = HIGH
+        return newDf
+
+    
+
+
+
+    
+
+
+    
