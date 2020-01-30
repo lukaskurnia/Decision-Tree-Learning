@@ -86,6 +86,10 @@ class DecisionTreeLearning:
             gain -= freq/row * e
         
         return gain
+
+    def gainRatio(self, df, attr):
+        e = self.entropy(df, self.target)
+        return self.infoGain(df,attr,e)/self.entropy(df,attr) 
         
         
     def getMaxGainAttr(self, df):
@@ -109,4 +113,5 @@ class DecisionTreeLearning:
     
     def dropAttr(self, df, attr):
         return df.drop(columns=attr)
+
     
