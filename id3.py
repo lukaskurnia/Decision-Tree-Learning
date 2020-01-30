@@ -12,11 +12,11 @@ class DecisionTreeLearning:
     # constructor
     def __init__(self):
         print("hello world")
-        self.readCsv('play')
+        self.readCsv('species')
 
     # read tennis.csv
     def readCsv(self, target):
-        self.df = pd.read_csv('data/tennis.csv')
+        self.df = pd.read_csv('data/iris.csv')
         self.target = target
         
     # print tennis.csv
@@ -90,8 +90,7 @@ class DecisionTreeLearning:
     def gainRatio(self, df, attr):
         e = self.entropy(df, self.target)
         return self.infoGain(df,attr,e)/self.entropy(df,attr) 
-        
-        
+                
     def getMaxGainAttr(self, df):
         features = df.columns.values
         features = features[features!=self.target]
@@ -110,8 +109,18 @@ class DecisionTreeLearning:
     def splitHorizontalKeepValue(self, df, attr, val):
         newdf = df[df[attr]==val]
         return newdf
+
+    def splitHorizontalDiscardValue(self, df, attr, val):
+        newdf = df[df[attr]!=val]
+        return newdf
     
     def dropAttr(self, df, attr):
         return df.drop(columns=attr)
+
+    def sortValue(self, df, attr):
+        return df.sort_values(by=[attr])
+
+    
+
 
     
