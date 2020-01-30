@@ -12,11 +12,11 @@ class DecisionTreeLearning:
     # constructor
     def __init__(self):
         print("hello world")
-        self.readCsv('species')
+        self.readCsv('play')
 
     # read tennis.csv
     def readCsv(self, target):
-        self.df = pd.read_csv('data/iris.csv')
+        self.df = pd.read_csv('data/tennis.csv')
         self.target = target
         
     # print tennis.csv
@@ -29,22 +29,17 @@ class DecisionTreeLearning:
 
     # private method for build tree recursively
     def _build(self, df):
-        print(df)
-        attr = self.getMaxGainAttr(df)
-        if self.entropy(df, attr) == 0:
+        if df.shape[1] == 1:
             return Tree(df[self.target][0])
-        
+        if len(df[self.target].unique()) == 1:
+            return Tree(df[self.target][0])
+
+        attr = self.getMaxGainAttr(df)
         tree = Tree(attr)
         values = df[attr].unique().tolist()
         for value in values:
-            print('attribut :', attr)
-            print('value :', value)
             splittedDf = self.splitHorizontalKeepValue(df, attr, value)
-            print('splittedDf')
-            print(splittedDf)
             childDf = self.dropAttr(splittedDf, attr)
-            print('childDf')
-            print(childDf)
             childTree = self._build(childDf)
             tree.addChild(value, childTree)
         
@@ -108,11 +103,11 @@ class DecisionTreeLearning:
     
     def splitHorizontalKeepValue(self, df, attr, val):
         newdf = df[df[attr]==val]
-        return newdf
+        return newdf.reset_index(drop=True)
 
-    def splitHorizontalDiscardValue(self, df, attr, val):
-        newdf = df[df[attr]!=val]
-        return newdf
+    # def splitHorizontalDiscardValue(self, df, attr, val):
+    #     newdf = df[df[attr]!=val]
+    #     return newdf.reset_index(drop=True)
     
     def dropAttr(self, df, attr):
         return df.drop(columns=attr)

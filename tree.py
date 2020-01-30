@@ -13,7 +13,7 @@ class Tree:
         if (level == 0):
             ret = repr(self.name)+"\n"
         else:
-            ret = "   "*(level-1)+"|--"+repr(self.name)+" ("+ value +")\n"
+            ret = "   "*(level-1)+"|--"+repr(self.name)+" ("+ str(value) +")\n"
         for child in self.children:
             ret += child[1].__str__(level=level+1, value=child[0])
         return ret

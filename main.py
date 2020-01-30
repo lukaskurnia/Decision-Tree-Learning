@@ -13,10 +13,10 @@ dtl = DecisionTreeLearning()
 
 # dtl.test()
 
-# dtl.build()
-# dtl.printTree()
+dtl.build()
+dtl.printTree()
 
-dtl.printCsv()
-sort = dtl.sortValue(dtl.df,'sepal_width')
-print(sort)
+# dtl.printCsv()
+# sort = dtl.sortValue(dtl.df,'sepal_width')
+# print(sort)
 
