@@ -15,13 +15,13 @@ class DecisionTreeLearning:
     # tree, decision tree
     # attributes, list of attributes with its unique value
     # isGainRatio (default = false), set true to use gain ratio to select max attribute
-    # prune (default = false), set true to use post-pruning rule
+    # isPrune (default = false), set true to use post-pruning rule
 
     # constructor
-    def __init__(self, filename, target, prune=False, isGainRatio=False):
+    def __init__(self, filename, target, isGainRatio=False, isPrune=False):
         self.readCsv(filename, target)
         self.isGainRatio = isGainRatio
-        self.prune = prune
+        self.isPrune = isPrune
 
     # read file csv with given filename in folder data
     def readCsv(self, filename, target):
@@ -39,11 +39,13 @@ class DecisionTreeLearning:
 
     # build tree by current dataframe
     def build(self):
-        traning_data, testing_data = self.splitByPercentage()
-        self.tree = self._build(traning_data)
+        data = self.splitByPercentage()
+        training_data = data[0]
+        testing_data = data[1]
+        self.tree = self._build(training_data)
 
-        if (self.prune):
-            self.prune()
+        if (self.isPrune):
+            self.prune(testing_data)
 
     # private method for build tree recursively
     def _build(self, df):
@@ -65,6 +67,7 @@ class DecisionTreeLearning:
             
             childLowDf = self.dropAttr(lowDf, attr)
             childLowTree = self._build(childLowDf)
+            treshold = round(treshold, 2)
             tree.addChild('< ' + str(treshold) , childLowTree)
 
             childHighDf = self.dropAttr(highDf, attr)
@@ -88,7 +91,7 @@ class DecisionTreeLearning:
 
         return tree
 
-    def prune(self):
+    def prune(self, testdf):
         pass
 
     def printTree(self):
@@ -248,12 +251,3 @@ class DecisionTreeLearning:
                     else:
                         newDf[col][i] = HIGH
         return newDf
-
-    
-
-
-
-    
-
-
-    
