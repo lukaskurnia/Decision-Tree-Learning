@@ -15,13 +15,13 @@ class DecisionTreeLearning:
     # tree, decision tree
     # attributes, list of attributes with its unique value
     # isGainRatio (default = false), set true to use gain ratio to select max attribute
-    # pruned (default = false), set true to use post-pruning rule
+    # prune (default = false), set true to use post-pruning rule
 
     # constructor
-    def __init__(self, filename, target, isGainRatio=False):
+    def __init__(self, filename, target, prune=False, isGainRatio=False):
         self.readCsv(filename, target)
         self.isGainRatio = isGainRatio
-        self.pruned = pruned
+        self.prune = prune
 
     # read file csv with given filename in folder data
     def readCsv(self, filename, target):
@@ -39,7 +39,11 @@ class DecisionTreeLearning:
 
     # build tree by current dataframe
     def build(self):
-        self.tree = self._build(self.df)
+        traning_data, testing_data = self.splitByPercentage()
+        self.tree = self._build(traning_data)
+
+        if (self.prune):
+            self.prune()
 
     # private method for build tree recursively
     def _build(self, df):
@@ -81,8 +85,11 @@ class DecisionTreeLearning:
                 childDf = self.dropAttr(splittedDf, attr)
                 childTree = self._build(childDf)
             tree.addChild(value, childTree)
-        
+
         return tree
+
+    def prune(self):
+        pass
 
     def printTree(self):
         print(self.tree)
@@ -161,7 +168,7 @@ class DecisionTreeLearning:
     
     # return 2 dataframes, first dataframe size is given percetage of original set, 
     # and the second is the rest of it
-    def splitByPercentage(self, percentage):
+    def splitByPercentage(self, percentage=80):
         idx = (round(self.df.shape[0]*percentage/100))
         return np.split(self.df, [idx])
         
