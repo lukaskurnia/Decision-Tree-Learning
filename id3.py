@@ -40,12 +40,12 @@ class DecisionTreeLearning:
     # build tree by current dataframe
     def build(self):
         data = self.splitByPercentage()
-        training_data = data[0]
-        testing_data = data[1]
-        self.tree = self._build(training_data)
+        trainingDf= data[0]
+        testingDf = data[1]
+        self.tree = self._build(trainingDf)
 
         if (self.isPrune):
-            self.prune(testing_data)
+            self.prune(testingDf)
 
     # private method for build tree recursively
     def _build(self, df):
@@ -96,6 +96,7 @@ class DecisionTreeLearning:
 
     def printTree(self):
         print(self.tree)
+        print(self.tree.toRules())
         
     def entropy(self, df, attr):
         #dataframe row

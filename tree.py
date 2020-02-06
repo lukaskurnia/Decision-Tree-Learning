@@ -9,8 +9,22 @@ class Tree:
     def addChild(self, val, child):
         self.children.append([val, child])
 
-    def toRule(self):
-        pass
+    def toRules(self):
+        rules = self.ruleBuilder()
+        return rules
+
+    def ruleBuilder(self, rules=[]):
+        if (self.children):
+            conditions = []
+            for child in self.children:
+                condition = (self.name, child[0])
+                print(condition)
+                for childrenCondition in (child[1].ruleBuilder()):
+                    childrenCondition.append(condition)
+                    conditions.append(childrenCondition)
+            return conditions
+        else:
+            return [[self.name]]
 
     def __str__(self, level=0, value=''):
         if (level == 0):
