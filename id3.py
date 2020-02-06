@@ -18,7 +18,7 @@ class DecisionTreeLearning:
     # pruned (default = false), set true to use post-pruning rule
 
     # constructor
-    def __init__(self, filename, target, isGainRatio=False):
+    def __init__(self, filename, target, isGainRatio=False, pruned=False):
         self.readCsv(filename, target)
         self.isGainRatio = isGainRatio
         self.pruned = pruned
@@ -61,6 +61,7 @@ class DecisionTreeLearning:
             
             childLowDf = self.dropAttr(lowDf, attr)
             childLowTree = self._build(childLowDf)
+            treshold = round(treshold, 2)
             tree.addChild('< ' + str(treshold) , childLowTree)
 
             childHighDf = self.dropAttr(highDf, attr)
@@ -241,12 +242,3 @@ class DecisionTreeLearning:
                     else:
                         newDf[col][i] = HIGH
         return newDf
-
-    
-
-
-
-    
-
-
-    
