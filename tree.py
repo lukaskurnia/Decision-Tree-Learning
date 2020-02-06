@@ -10,7 +10,7 @@ class Tree:
         self.children.append([val, child])
 
     def toRule(self):
-        
+        pass
 
     def __str__(self, level=0, value=''):
         if (level == 0):
