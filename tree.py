@@ -9,6 +9,9 @@ class Tree:
     def addChild(self, val, child):
         self.children.append([val, child])
 
+    def toRule(self):
+        pass
+
     def __str__(self, level=0, value=''):
         if (level == 0):
             ret = repr(self.name)+"\n"
