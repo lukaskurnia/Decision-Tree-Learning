@@ -10,10 +10,6 @@ class Tree:
         self.children.append([val, child])
 
     def toRules(self):
-        rules = self.ruleBuilder()
-        return rules
-
-    def ruleBuilder(self, rules=[]):
         if (self.children):
             conditions = []
             for child in self.children:
