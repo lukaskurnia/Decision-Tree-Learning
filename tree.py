@@ -15,7 +15,7 @@ class Tree:
             for child in self.children:
                 condition = (self.name, child[0])
                 print(condition)
-                for childrenCondition in (child[1].ruleBuilder()):
+                for childrenCondition in (child[1].toRules()):
                     childrenCondition.append(condition)
                     conditions.append(childrenCondition)
             return conditions

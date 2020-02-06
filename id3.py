@@ -93,7 +93,8 @@ class DecisionTreeLearning:
         return tree
 
     def prune(self, testdf):
-        pass
+        rules = self.tree.toRules()
+
 
     def printTree(self):
         print(self.tree)
