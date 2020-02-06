@@ -14,13 +14,13 @@ class DecisionTreeLearning:
     # target, target attribute
     # tree, decision tree
     # attributes, list of attributes with its unique value
-    # gainRatio (default = false), set true to use gain ratio to select max attribute
+    # isGainRatio (default = false), set true to use gain ratio to select max attribute
     # pruned (default = false), set true to use post-pruning rule
 
     # constructor
-    def __init__(self, filename, target, gainRatio=False, pruned=False):
+    def __init__(self, filename, target, isGainRatio=False):
         self.readCsv(filename, target)
-        self.gainRatio = gainRatio
+        self.isGainRatio = isGainRatio
         self.pruned = pruned
 
     # read file csv with given filename in folder data
@@ -132,7 +132,10 @@ class DecisionTreeLearning:
         # print(features)
         gains = []
         for feature in features:
-            gains.append(self.infoGain(df, feature, self.entropy(df, self.target)))
+            if(self.isGainRatio == True):
+                gains.append(self.gainRatio(df, feature))
+            else:
+                gains.append(self.infoGain(df, feature, self.entropy(df, self.target)))
         
         #get index of max attributes
         maxindex = 0
