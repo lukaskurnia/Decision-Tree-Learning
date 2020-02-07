@@ -48,7 +48,7 @@ class DecisionTreeLearning:
         self.tree = self._build(trainingDf)
 
         if (self.isPrune):
-            self.prune(testingDf)
+            self.rules = self.prune(testingDf)
 
     # private method for build tree recursively
     def _build(self, df):
@@ -105,6 +105,8 @@ class DecisionTreeLearning:
         result = rules.listOfRules.copy()
         print("original rules:")
         print(result)
+
+        accuracylist = []
         for rule in result:
             ans = rule.pop(0)
             
@@ -115,7 +117,7 @@ class DecisionTreeLearning:
                     conditions.append(testdf[rule[i].label]==rule[i].value)
 
                 # iterasi untuk menghitung jumlah kasus dari setiap cabang condition
-                accuracylist = []
+                accuracy = []
                 emptydata = False
 
                 for i in range(0,len(rule)):
@@ -137,24 +139,45 @@ class DecisionTreeLearning:
                     # print(freq_true)
 
                     if (freq!=0):
-                        accuracylist.append(freq_true/freq)
-                    # print(accuracylist)
-                    print()
+                        accuracy.append(freq_true/freq)
+                    # print(accuracy)
+                    # print()
                 
-                if (len(accuracylist) == len(rule)): #if some data missing, don't prune
-                    idx = accuracylist.index(max(accuracylist))
-                    # print("index with max accuracy:" + str(idx))
-                    for i in range (0,idx): #delete less accurate rule
+                if (len(accuracy) == len(rule)): #if some data missing, don't prune
+                    idx = accuracy.index(max(accuracy))
+                    for i in range (0,idx): #delete less accurate rule starting from bottom
                         rule.pop(0)
-                        accuracylist.pop(0)
+                        accuracy.pop(0)
+                
+                if (accuracy):
+                    accuracylist.append(accuracy.pop(0)) #get the accuracy of full pruned tree only
+                else:
+                    accuracylist.append(0) #for missing data, give 0 as accuracy
             rule.insert(0,ans)
 
-        print("pruned rules:")
-        print(result)
+        result = self.sortRules(result, accuracylist)
+        # print("pruned &sorted rules:")
+        # print(result)
+        return result
+    
+    def sortRules(self, rules, accuracy):
+        # print("before sort:")
+        # print(rules)
+        # print(accuracy)
+
+        rulessorted = []
+        accuracysorted = accuracy.copy()
+        accuracysorted.sort(reverse = True)
+        for i in range (0, len(accuracy)):
+            idx = accuracy.index(accuracysorted.pop(0))
+            rulessorted.append(rules[idx])
+
+        # print("after sort:")
+        # print(rulessorted)
+        return rulessorted
 
     def printTree(self):
         print(self.tree)
-        # self.prune(1)
         
     def entropy(self, df, attr):
         #dataframe row
