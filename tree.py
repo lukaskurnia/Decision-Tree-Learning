@@ -9,18 +9,6 @@ class Tree:
     def addChild(self, val, child):
         self.children.append([val, child])
 
-    def toRules(self):
-        if (self.children):
-            conditions = []
-            for child in self.children:
-                condition = (self.name, child[0])
-                for childrenCondition in (child[1].toRules()):
-                    childrenCondition.append(condition)
-                    conditions.append(childrenCondition)
-            return conditions
-        else:
-            return [[self.name]]
-
     def __str__(self, level=0, value=''):
         if (level == 0):
             ret = repr(self.name)+"\n"
