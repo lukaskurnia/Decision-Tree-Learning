@@ -15,7 +15,7 @@ dtl = DecisionTreeLearning("tennis", "play", isPrune=True)
 
 dtl.build()
 
-dtl.printTree()
+# dtl.printTree()
 
 # dtl.printCsv()
 # sort = dtl.sortValue(dtl.df,'sepal_width')
