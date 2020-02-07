@@ -40,9 +40,11 @@ class DecisionTreeLearning:
 
     # build tree by current dataframe
     def build(self):
-        data = self.splitByPercentage()
+        data = self.splitByPercentage(80)
         trainingDf= data[0]
+        print(trainingDf)
         testingDf = data[1]
+        print(testingDf)
         self.tree = self._build(trainingDf)
 
         if (self.isPrune):
@@ -95,50 +97,55 @@ class DecisionTreeLearning:
 
     def prune(self, testdf):
         rules = RulesContainer(self.tree)
-        # rules.printRules()
-        # print(testdf)
         datalen = len(testdf)
-        # print(rules)
-        # print()
-        for rule in rules.listOfRules.copy():
+        result = rules.listOfRules.copy()
+        print("original rules:")
+        print(result)
+        for rule in result:
             ans = rule.pop(0)
-            print((testdf[self.target]==ans))
-
-            conditions = []
-            for i in range (0,len(rule)):
-                conditions.append(testdf[rule[i].label]==rule[i].value)
-            print(rule)
-
-            # iterasi untuk menghitung jumlah kasus dari setiap cabang condition
-            accuracylist = []
-            emptydata = False
-
-            for i in range(0,len(rule)):
-                a = True
-                b = True
-                freq = 0
-                freq_true = 0
-
-                for j in reversed(range(i,len(rule))):
-                    b = b & conditions[j]
-                    a = b & (testdf[self.target]==ans)
-                    print(rule[j])
-                freq = b.sum()
-                freq_true = a.sum()
-                print("total dataset with condition:")
-                print(freq)
-                print("total dataset with correct target value:")
-                print(freq_true)
-                if (freq!=0):
-                    accuracylist.append(freq_true/freq)
-                print()
             
-            print(accuracylist)
-            if (len(accuracylist) == len(rule)): #if some data missing, don't prune
-                idx = accuracylist.index(max(accuracylist))
-                print("index with max accuracy:" + str(idx))
+            if (rule):
+                conditions = []
 
-            print()
+                for i in range (0,len(rule)):
+                    conditions.append(testdf[rule[i].label]==rule[i].value)
+
+                # iterasi untuk menghitung jumlah kasus dari setiap cabang condition
+                accuracylist = []
+                emptydata = False
+
+                for i in range(0,len(rule)):
+                    cond_series = True
+                    condtarget_series = True
+                    freq = 0
+                    freq_true = 0
+
+                    for j in reversed(range(i,len(rule))):
+                        cond_series = cond_series & conditions[j]
+                        condtarget_series = cond_series & (testdf[self.target]==ans)
+                        # print(rule[j])
+                    freq = cond_series.sum()
+                    freq_true = condtarget_series.sum()
+
+                    # print("total dataset with condition:")
+                    # print(freq)
+                    # print("total dataset with correct target value:")
+                    # print(freq_true)
+
+                    if (freq!=0):
+                        accuracylist.append(freq_true/freq)
+                    # print(accuracylist)
+                    print()
+                
+                if (len(accuracylist) == len(rule)): #if some data missing, don't prune
+                    idx = accuracylist.index(max(accuracylist))
+                    # print("index with max accuracy:" + str(idx))
+                    for i in range (0,idx): #delete less accurate rule
+                        rule.pop(0)
+            rule.insert(0,ans)
+
+        print("pruned rules:")
+        print(result)
 
     def printTree(self):
         print(self.tree)
