@@ -102,6 +102,7 @@ class DecisionTreeLearning:
         # print()
         for rule in rules.listOfRules.copy():
             ans = rule.pop(0)
+            print((testdf[self.target]==ans))
 
             conditions = []
             for i in range (0,len(rule)):

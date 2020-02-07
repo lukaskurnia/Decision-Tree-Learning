@@ -12,7 +12,7 @@ class RulesContainer:
                     conditions.append(childrenCondition)
             return conditions
         else:
-            return [[Condition(tree.name)]]
+            return [[tree.name]]
     
     def printRules(self):
         rulecopy = self.listOfRules.copy()
