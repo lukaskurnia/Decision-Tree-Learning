@@ -94,11 +94,46 @@ class DecisionTreeLearning:
 
     def prune(self, testdf):
         rules = self.tree.toRules()
+        print(testdf)
+        datalen = len(testdf)
+        print(rules)
+        print()
+        for rule in rules:
+            ans = rule.pop(0)
 
+            conditions = []
+            for i in range (0,len(rule)):
+                conditions.append(testdf[rule[i][0]]==rule[i][1])
+
+            print(rule)
+
+            # iterasi untuk menghitung jumlah kasus dari setiap cabang condition
+            freq = []
+
+            for i in reversed(range(0,len(rule))):
+                a = True
+                b = True
+                freq = 0
+                freq_true = 0
+                for j in range(i,len(rule)):
+                    b = b & conditions[j]
+                    a = b & (testdf[self.target]==ans)
+                    freq = b.sum()
+                    freq_true = a.sum()
+                    print("condition:")
+                    print(str(conditions[j]))
+                    print("total dataset with condition:")
+                    print(freq)
+                    print("total dataset with correct target value:")
+                    print(freq_true)
+                    print()
+                    freq.append((freq,freq_true))
+            
+            
 
     def printTree(self):
         print(self.tree)
-        print(self.tree.toRules())
+        # self.prune(1)
         
     def entropy(self, df, attr):
         #dataframe row

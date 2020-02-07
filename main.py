@@ -1,6 +1,6 @@
 from id3 import DecisionTreeLearning
 
-dtl = DecisionTreeLearning("tennis", "play")
+dtl = DecisionTreeLearning("tennis", "play", isPrune=True)
 # print(dtl.splitHorizontalKeepValue(dtl.df, 'outlook', 'sunny'))
 # e = dtl.entropy(dtl.splitHorizontalKeepValue(dtl.df, 'outlook', 'sunny'), 'play')
 # print(e)
