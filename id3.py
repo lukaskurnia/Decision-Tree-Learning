@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np 
 from tree import Tree
+from rule import RulesContainer
 from math import log
 
 # Constant class for continuous value
@@ -93,43 +94,50 @@ class DecisionTreeLearning:
         return tree
 
     def prune(self, testdf):
-        rules = self.tree.toRules()
-        print(testdf)
+        rules = RulesContainer(self.tree)
+        # rules.printRules()
+        # print(testdf)
         datalen = len(testdf)
-        print(rules)
-        print()
-        for rule in rules:
+        # print(rules)
+        # print()
+        for rule in rules.listOfRules.copy():
             ans = rule.pop(0)
 
             conditions = []
             for i in range (0,len(rule)):
-                conditions.append(testdf[rule[i][0]]==rule[i][1])
-
+                conditions.append(testdf[rule[i].label]==rule[i].value)
             print(rule)
 
             # iterasi untuk menghitung jumlah kasus dari setiap cabang condition
-            freq = []
+            accuracylist = []
+            emptydata = False
 
-            for i in reversed(range(0,len(rule))):
+            for i in range(0,len(rule)):
                 a = True
                 b = True
                 freq = 0
                 freq_true = 0
-                for j in range(i,len(rule)):
+
+                for j in reversed(range(i,len(rule))):
                     b = b & conditions[j]
                     a = b & (testdf[self.target]==ans)
-                    freq = b.sum()
-                    freq_true = a.sum()
-                    print("condition:")
-                    print(str(conditions[j]))
-                    print("total dataset with condition:")
-                    print(freq)
-                    print("total dataset with correct target value:")
-                    print(freq_true)
-                    print()
-                    freq.append((freq,freq_true))
+                    print(rule[j])
+                freq = b.sum()
+                freq_true = a.sum()
+                print("total dataset with condition:")
+                print(freq)
+                print("total dataset with correct target value:")
+                print(freq_true)
+                if (freq!=0):
+                    accuracylist.append(freq_true/freq)
+                print()
             
-            
+            print(accuracylist)
+            if (len(accuracylist) == len(rule)): #if some data missing, don't prune
+                idx = accuracylist.index(max(accuracylist))
+                print("index with max accuracy:" + str(idx))
+
+            print()
 
     def printTree(self):
         print(self.tree)
