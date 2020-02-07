@@ -146,6 +146,7 @@ class DecisionTreeLearning:
                     # print("index with max accuracy:" + str(idx))
                     for i in range (0,idx): #delete less accurate rule
                         rule.pop(0)
+                        accuracylist.pop(0)
             rule.insert(0,ans)
 
         print("pruned rules:")
