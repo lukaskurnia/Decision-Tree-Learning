@@ -52,6 +52,11 @@ class DecisionTreeLearning:
 
     # private method for build tree recursively
     def _build(self, df):
+        if df.empty:
+            # empty dataframe 
+            mode = self.df[self.target].mode()[0]
+            return Tree(mode)
+
         if len(df[self.target].unique()) == 1:
             # entropy = 0 
             return Tree(df[self.target][0])
@@ -59,7 +64,6 @@ class DecisionTreeLearning:
         if df.shape[1] == 1:
             # empty attribute 
             mode = df[self.target].mode()[0]
-            print(df)
             return Tree(mode)
 
         attr = self.getMaxGainAttr(df)
