@@ -111,6 +111,7 @@ class DecisionTreeLearning:
             newaccuracy.append(newacc)
 
         newrules = self.sortRules(newrules, newaccuracy)
+        return newrules
 
     def getMaxAccuracyRule(self, rule, df):
         series = []
