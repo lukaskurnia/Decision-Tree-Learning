@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np 
 from tree import Tree
 from rule import RulesContainer
-from math import log
+from math import log,pow
 
 # Constant class for continuous value
 HIGH = 'high'
@@ -101,79 +101,53 @@ class DecisionTreeLearning:
 
     def prune(self, testdf):
         rules = RulesContainer(self.tree)
-        datalen = len(testdf)
-        result = rules.listOfRules.copy()
-        print("original rules:")
-        print(result)
+        original = rules.listOfRules.copy()
 
-        accuracylist = []
-        for rule in result:
-            ans = rule.pop(0)
-            
-            if (rule):
-                conditions = []
+        newrules = []
+        newaccuracy = []
+        for rule in original:
+            newacc, newrule = self.getMaxAccuracyRule(rule, testdf)
+            newrules.append(newrule)
+            newaccuracy.append(newacc)
 
-                for i in range (0,len(rule)):
-                    conditions.append(testdf[rule[i].label]==rule[i].value)
+        newrules = self.sortRules(newrules, newaccuracy)
 
-                # iterasi untuk menghitung jumlah kasus dari setiap cabang condition
-                accuracy = []
-                emptydata = False
+    def getMaxAccuracyRule(self, rule, df):
+        series = []
 
-                for i in range(0,len(rule)):
-                    cond_series = True
-                    condtarget_series = True
-                    freq = 0
-                    freq_true = 0
+        ans = rule.pop(0)
+        for i in range (0,len(rule)):
+            series.append((df[rule[i].label]==rule[i].value, rule[i]))
+        
+        powerset = self.getPowerSet(series)
 
-                    for j in reversed(range(i,len(rule))):
-                        cond_series = cond_series & conditions[j]
-                        condtarget_series = cond_series & (testdf[self.target]==ans)
-                        # print(rule[j])
-                    freq = cond_series.sum()
-                    freq_true = condtarget_series.sum()
+        maxaccuracy = 0
+        bestconditions = rule
+        cond_series = True
+        condtarget_series = True
+        for _set in powerset:
+            conditions = []
+            for x in _set:
+                cond_series = cond_series & x[0]
+                conditions.append(x[1])
+                condtarget_series = cond_series & (df[self.target]==ans)
+            freq = cond_series.sum()
+            freq_true = condtarget_series.sum()
 
-                    # print("total dataset with condition:")
-                    # print(freq)
-                    # print("total dataset with correct target value:")
-                    # print(freq_true)
+            if (freq != 0):
+                accuracy = freq_true/freq
+                if (maxaccuracy < accuracy):
+                    maxaccuracy = accuracy
+                    bestconditions = conditions.copy()
+        return maxaccuracy, bestconditions
 
-                    if (freq!=0):
-                        accuracy.append(freq_true/freq)
-                    # print(accuracy)
-                    # print()
-                
-                if (len(accuracy) == len(rule)): #if some data missing, don't prune
-                    idx = accuracy.index(max(accuracy))
-                    for i in range (0,idx): #delete less accurate rule starting from bottom
-                        rule.pop(0)
-                        accuracy.pop(0)
-                
-                if (accuracy):
-                    accuracylist.append(accuracy.pop(0)) #get the accuracy of full pruned tree only
-                else:
-                    accuracylist.append(0) #for missing data, give 0 as accuracy
-            rule.insert(0,ans)
-
-        result = self.sortRules(result, accuracylist)
-        # print("pruned &sorted rules:")
-        # print(result)
-        return result
-    
     def sortRules(self, rules, accuracy):
-        # print("before sort:")
-        # print(rules)
-        # print(accuracy)
-
         rulessorted = []
         accuracysorted = accuracy.copy()
         accuracysorted.sort(reverse = True)
         for i in range (0, len(accuracy)):
             idx = accuracy.index(accuracysorted.pop(0))
             rulessorted.append(rules[idx])
-
-        # print("after sort:")
-        # print(rulessorted)
         return rulessorted
 
     def printTree(self):
@@ -319,3 +293,19 @@ class DecisionTreeLearning:
                     else:
                         newDf[col][i] = HIGH
         return newDf
+    
+    def getPowerSet(self,_set): 
+        powerset = []
+        set_size = len(_set)
+        pow_set_size = (int) (pow(2, set_size)); 
+        i = 0; 
+        j = 0; 
+        
+        for i in range(0, pow_set_size):
+            temp = []
+            for j in range(0, set_size): 
+                if((i & (1 << j)) > 0): 
+                    temp.append(_set[j])
+            if (temp):
+                powerset.append(temp)
+        return powerset
