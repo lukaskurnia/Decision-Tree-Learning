@@ -104,7 +104,6 @@ class DecisionTreeLearning:
     def prune(self, testdf):
         rules = RulesContainer(self.tree)
         original = rules.listOfRules.copy()
-
         newrules = []
         newaccuracy = []
         for rule in original:
@@ -117,7 +116,6 @@ class DecisionTreeLearning:
 
     def getMaxAccuracyRule(self, rule, df):
         series = []
-
         ans = rule.pop(0)
         for i in range (0,len(rule)):
             series.append((df[rule[i].label]==rule[i].value, rule[i]))
@@ -152,7 +150,8 @@ class DecisionTreeLearning:
         accuracysorted.sort(reverse = True)
         for i in range (0, len(accuracy)):
             idx = accuracy.index(accuracysorted.pop(0))
-            rulessorted.append(rules[idx])
+            rulessorted.append(rules.pop(idx))
+            accuracy.pop(idx)
         return rulessorted
 
     def printTree(self):
@@ -306,7 +305,7 @@ class DecisionTreeLearning:
         i = 0; 
         j = 0; 
         
-        for i in range(0, pow_set_size):
+        for i in reversed(range(0, pow_set_size)):
             temp = []
             for j in range(0, set_size): 
                 if((i & (1 << j)) > 0): 
