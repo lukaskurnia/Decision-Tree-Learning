@@ -39,16 +39,18 @@ class DecisionTreeLearning:
         return not ((self.df[attr].dtypes == 'bool') or (self.df[attr].dtypes == 'object'))
 
     # build tree by current dataframe
-    def build(self):
-        data = self.splitByPercentage(80)
-        trainingDf= data[0]
-        print(trainingDf)
-        testingDf = data[1]
-        print(testingDf)
-        self.tree = self._build(trainingDf)
-
+    def build(self):        
         if (self.isPrune):
+            data = self.splitByPercentage(80)
+            trainingDf= data[0]
+            # print(trainingDf)
+            testingDf = data[1]
+            # print(testingDf)
+            self.tree = self._build(trainingDf)
             self.rules = self.prune(testingDf)
+
+        else:
+            self.tree = self._build(self.df)
 
     # private method for build tree recursively
     def _build(self, df):
