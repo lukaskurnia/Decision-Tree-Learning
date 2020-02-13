@@ -243,11 +243,11 @@ class DecisionTreeLearning:
     #handling missing value: get the most frequent value with the same target
     def handling_missing_value(self):
         if self.df.isnull().values.any():
-         missing_columns = self.df.columns[self.df.isna().any()].tolist()
-        for col in missing_columns:
-            mode = self.df.mode()[col][0]
-            rows = pd.isnull(self.df).any(1).nonzero()[0].tolist()
-            self.df[col][rows]=mode
+            missing_columns = self.df.columns[self.df.isna().any()].tolist()
+            for col in missing_columns:
+                mode = self.df.mode()[col][0]
+                rows = pd.isnull(self.df).any(1).nonzero()[0].tolist()
+                self.df[col][rows]=mode
 
     def getAllTreshold(self, df, attr):
         sortedDf = self.sortValue(df,attr)
