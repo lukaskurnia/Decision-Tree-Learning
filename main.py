@@ -14,6 +14,7 @@ dtl = DecisionTreeLearning("tennis2", "play", isPrune=True)
 # dtl.test()
 
 dtl.build()
+print(dtl.rules)
 
 # dtl.printTree()
 

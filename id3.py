@@ -142,6 +142,8 @@ class DecisionTreeLearning:
                 if (maxaccuracy < accuracy):
                     maxaccuracy = accuracy
                     bestconditions = conditions.copy()
+        bestconditions.reverse()
+        bestconditions.append(ans)
         return maxaccuracy, bestconditions
 
     def sortRules(self, rules, accuracy):
