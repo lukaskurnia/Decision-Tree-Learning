@@ -104,6 +104,7 @@ class DecisionTreeLearning:
     def prune(self, testdf):
         rules = RulesContainer(self.tree)
         original = rules.listOfRules.copy()
+        # print(original)
         newrules = []
         newaccuracy = []
         for rule in original:
@@ -122,24 +123,37 @@ class DecisionTreeLearning:
         
         powerset = self.getPowerSet(series)
 
+        # check availability of data for complete conditions, if not available, don't prune
+        cond_series = True
+        most_specific_condition = powerset.pop(0)
+        for x in most_specific_condition:
+            cond_series = cond_series & x[0]
+        freq = cond_series.sum()
+        
         maxaccuracy = 0
         bestconditions = rule
-        cond_series = True
-        condtarget_series = True
-        for _set in powerset:
-            conditions = []
-            for x in _set:
-                cond_series = cond_series & x[0]
-                conditions.append(x[1])
-                condtarget_series = cond_series & (df[self.target]==ans)
-            freq = cond_series.sum()
-            freq_true = condtarget_series.sum()
 
-            if (freq != 0):
-                accuracy = freq_true/freq
-                if (maxaccuracy < accuracy):
-                    maxaccuracy = accuracy
-                    bestconditions = conditions.copy()
+        if (freq != 0):
+            powerset.insert(0, most_specific_condition)
+            for _set in powerset:
+                cond_series = True
+                condtarget_series = True
+                conditions = []
+                for x in _set:
+                    cond_series = cond_series & x[0]
+                    conditions.append(x[1])
+                    condtarget_series = cond_series & (df[self.target]==ans)
+                freq = cond_series.sum()
+                freq_true = condtarget_series.sum()
+
+                if (freq != 0):
+                    accuracy = freq_true/freq
+                    # print(conditions)
+                    # print(accuracy)
+                    if (maxaccuracy < accuracy):
+                        maxaccuracy = accuracy
+                        bestconditions = conditions.copy()
+
         bestconditions.reverse()
         bestconditions.append(ans)
         return maxaccuracy, bestconditions
