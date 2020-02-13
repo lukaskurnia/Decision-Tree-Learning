@@ -44,9 +44,7 @@ class DecisionTreeLearning:
         if (self.isPrune):
             data = self.splitByPercentage(80)
             trainingDf= data[0]
-            # print(trainingDf)
             testingDf = data[1]
-            # print(testingDf)
             self.tree = self._build(trainingDf)
             self.rules = self.prune(testingDf)
 
@@ -104,7 +102,6 @@ class DecisionTreeLearning:
     def prune(self, testdf):
         rules = RulesContainer(self.tree)
         original = rules.listOfRules.copy()
-        # print(original)
         newrules = []
         newaccuracy = []
         for rule in original:
@@ -123,7 +120,7 @@ class DecisionTreeLearning:
         
         powerset = self.getPowerSet(series)
 
-        # check availability of data for complete conditions, if not available, don't prune
+        # check availability of data for complete condition, if not available, don't prune
         cond_series = True
         most_specific_condition = powerset.pop(0)
         for x in most_specific_condition:
@@ -148,8 +145,6 @@ class DecisionTreeLearning:
 
                 if (freq != 0):
                     accuracy = freq_true/freq
-                    # print(conditions)
-                    # print(accuracy)
                     if (maxaccuracy < accuracy):
                         maxaccuracy = accuracy
                         bestconditions = conditions.copy()
@@ -177,7 +172,6 @@ class DecisionTreeLearning:
 
         #get unique value
         unique = df[attr].unique().tolist()
-        # print(df[attr])
 
         entropy = 0
         for u in unique:
