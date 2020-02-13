@@ -27,6 +27,7 @@ class DecisionTreeLearning:
     # read file csv with given filename in folder data
     def readCsv(self, filename, target):
         self.df = pd.read_csv('data/' + filename + '.csv')
+        self.handling_missing_value()
         self.target = target
         self.attributes = {}
         for col in self.df.columns:
@@ -67,7 +68,6 @@ class DecisionTreeLearning:
             # empty attribute 
             mode = df[self.target].mode()[0]
             return Tree(mode)
-
         attr = self.getMaxGainAttr(df)
         tree = Tree(attr)
         
